@@ -2,7 +2,6 @@ services:
   samba:
     image: dperson/samba
     restart: unless-stopped
-      #privileged: true
     ports:
       - "139:139"
       - "445:445"
