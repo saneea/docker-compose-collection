@@ -3,7 +3,7 @@ services:
     image: gitea/gitea:1.23.3
     restart: unless-stopped
     ports:
-      - "222:22"
+      - "222:22" # you should change "SSH Server Port" in "Initial Configuration" web page from 22 to 222. Or you can change it directly in file ./data/gitea/conf/app.ini (section [server], property "SSH_PORT")
       - "3000:3000"
     volumes:
       - ./data:/data
