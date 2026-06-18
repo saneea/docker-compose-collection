@@ -1,0 +1,40 @@
+services:
+  vikunja:
+    image: vikunja/vikunja:2.3.0
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: ${VIKUNJA_SERVICE_PUBLICURL}
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: true
+      VIKUNJA_SERVICE_SECRET: ${VIKUNJA_SERVICE_SECRET}
+      VIKUNJA_DATABASE_HOST: pg
+      VIKUNJA_DATABASE_PASSWORD: ${PG_PASSWORD}
+      VIKUNJA_DATABASE_TYPE: postgres
+      VIKUNJA_DATABASE_USER: ${PG_USER}
+      VIKUNJA_DATABASE_DATABASE: vikunja
+      VIKUNJA_MAILER_ENABLED: true
+      VIKUNJA_MAILER_FORCESSL: true
+      VIKUNJA_MAILER_HOST: ${VIKUNJA_MAILER_HOST}
+      VIKUNJA_MAILER_PORT: ${VIKUNJA_MAILER_PORT}
+      VIKUNJA_MAILER_USERNAME: ${VIKUNJA_MAILER_EMAIL}
+      VIKUNJA_MAILER_PASSWORD: ${VIKUNJA_MAILER_PASSWORD}
+      VIKUNJA_MAILER_FROMEMAIL: ${VIKUNJA_MAILER_EMAIL}
+    ports:
+      - 3456:3456
+    volumes:
+      - ./data/vikunja/files:/app/vikunja/files
+    depends_on:
+      pg:
+        condition: service_healthy
+    restart: unless-stopped
+
+  pg:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_USER: ${PG_USER}
+    volumes:
+      - ./data/pg:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U $$POSTGRES_USER"]
+      interval: 2s
+      start_period: 30s
